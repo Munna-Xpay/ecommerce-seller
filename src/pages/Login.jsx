@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { Box, Button, Divider, FilledInput, FormControl, FormHelperText, Grid, IconButton, InputAdornment, InputLabel, Stack, TextField, Typography } from '@mui/material'
+import { Box, Button, Divider, FilledInput, FormControl, FormHelperText,  IconButton, InputAdornment, InputLabel, Stack, TextField, Typography } from '@mui/material'
 import { useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 import { sellerLogin } from '../services/allApi';
 import { sellerLoginValidation } from '../formValidation/sellerLoginValidation';
+import { useRecoilState } from 'recoil';
+import { sellerState } from '../recoil/atoms/sellerState';
 
 const Login = () => {
 
-    const admin = false
+    const [seller, setSeller] = useRecoilState(sellerState)
+    console.log(seller)
     const navigate = useNavigate()
     const [errors, setErrors] = useState(false)
     const [showPassword, setShowPassword] = useState(false);
@@ -38,7 +41,16 @@ const Login = () => {
         try {
             await sellerLoginValidation.validate(sellerData, { abortEarly: false })
             const res = await sellerLogin(sellerData)
-            setErrors({})
+            if (res.status == 200) {
+                setSeller(res.data.seller)
+                localStorage.setItem('token', res.data.token)
+                localStorage.setItem('sellerId', res.data.seller._id)
+                setErrors({})
+            } else {
+                console.log(res)
+                toast.error(res.response.data)
+                setErrors({})
+            }
         }
         catch (err) {
             console.log(err);
@@ -52,10 +64,10 @@ const Login = () => {
 
 
     useEffect(() => {
-        if (admin) {
-            navigate('/sales-analytics')
+        if (seller?._id) {
+            navigate('/top-product')
         }
-    }, [admin])
+    }, [seller])
 
     return (
         <>
@@ -139,8 +151,6 @@ const Login = () => {
                         padding: '10px',
                         fontSize: '17px',
                         fontFamily: 'sans-serif',
-
-
                     }}
                 />
             </Stack>

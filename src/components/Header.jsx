@@ -15,13 +15,17 @@ import MoreIcon from '@mui/icons-material/MoreVert';
 import Sidebar from '../components/Sidebar'
 import { Button, Drawer, Stack } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
+import { sellerById } from '../services/allApi';
+import { sellerState } from '../recoil/atoms/sellerState';
 
 
 
 export default function PrimarySearchAppBar() {
 
     const navigate = useNavigate()
-    const admin = true
+    const [seller, setSeller] = useRecoilState(sellerState)
+    console.log(seller)
     const [drawer, setDrawer] = useState(false)
     const [anchorEl, setAnchorEl] = useState(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
@@ -49,16 +53,25 @@ export default function PrimarySearchAppBar() {
     };
 
 
-    // useEffect(() => {
-    //     const token = localStorage.getItem('token')
-    //     const adminId = localStorage.getItem('adminId')
-    //     if (admin.admin === null && token) {
-    //         dispatch(adminById(adminId))
-    //     }
-    //     else if (!token) {
-    //         navigate('/')
-    //     }
-    // }, [admin.admin])
+    useEffect(() => {
+        const token = localStorage.getItem('token')
+        const sellerId = localStorage.getItem('sellerId')
+        if (!seller?._id && token) {
+            const reqHeader = {
+                "Content-Type": "application/json",
+                "user_token": `Bearer ${token}`
+            }
+            sellerById(sellerId, reqHeader).then(res => {
+                setSeller(res.data)
+                console.log(res)
+            }).catch(err => {
+                console.log(err)
+            })
+        }
+        else if (!token) {
+            navigate('/')
+        }
+    }, [seller])
 
     const menuId = 'primary-search-account-menu';
     const renderMenu = (
@@ -144,25 +157,25 @@ export default function PrimarySearchAppBar() {
                     {/* {admin.admin && */}
                     <Box display={{ xs: 'block', md: 'none' }}>
                         <IconButton
-                        
+
                             size="large"
                             edge="start"
                             color="inherit"
                             aria-label="open drawer"
-                            sx={{ mr: { xs: 0, md: 5 }}}
+                            sx={{ mr: { xs: 0, md: 5 } }}
                             onClick={() => setDrawer(true)}
                         >
                             <MenuIcon />
                         </IconButton>
-                        </Box>
+                    </Box>
                     {/* } */}
                     <Stack direction={'row'} spacing={1}>
                         <img width={40} height={40} src="https://shop-point.merku.love/assets/logo_light-33bb10d5.svg" alt="" />
-                         <Typography fontSize={30} fontWeight={'bold'} color={'white'}>Shop Point</Typography>
+                        <Typography fontSize={30} fontWeight={'bold'} color={'white'}>Shop Point</Typography>
                     </Stack>
                     <Box sx={{ flexGrow: 1 }} />
                     <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                        {admin ?
+                        {seller ?
                             <>
                                 <IconButton size="large" aria-label="show 4 new mails" color="inherit">
                                     <Badge badgeContent={4} color="error">
