@@ -45,3 +45,18 @@ export const productImageUpdate=async(body,reqHeader,id)=>{
 export const getProductsInProductsManagement = async (filter, searchData,reqHeader) => {
     return await commonApi('GET', `${BASE_URL}/api/seller/products-management?categoryFilter=${filter.categoryFilter}&stockFilter=${filter.stockFilter}&productTypeFilter=${filter.productTypeFilter}&additionalOption=${filter.additionalOption}&searchData=${searchData}`,'',reqHeader);
 }
+
+//product by category price
+export const getProductPriceByCategory=async(reqHeader)=>{
+    return await commonApi('GET',`${BASE_URL}/api/seller/price-by-category-seller`,'',reqHeader)
+}
+
+//product by category
+export const getProductsByCategory=async(reqHeader)=>{
+    return await commonApi('GET',`${BASE_URL}/api/seller/product-by-category`,'',reqHeader)
+}
+
+//seller product price by category
+export const getSellerProductsByCategory=async(reqHeader)=>{
+    return await commonApi('GET',`${BASE_URL}/api/seller/seller-category`,'',reqHeader)
+}
