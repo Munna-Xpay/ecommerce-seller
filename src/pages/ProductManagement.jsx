@@ -7,15 +7,13 @@ import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import PageHead from '../components/PageHead'
 import StarIcon from '@mui/icons-material/Star';
 import EditIcon from '@mui/icons-material/Edit';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useRecoilState } from 'recoil';
 import { productsManagement } from '../recoil/atoms/productState';
 import { getProductsInProductsManagement } from '../services/allApi';
 
 function ProductManagement() {
-   // const products = useSelector(state => state.productReducer.productsManagement)
    const [products,setProducts]=useRecoilState(productsManagement)
-    console.log(products);
+    //console.log(products);
     const navigate=useNavigate()
     const [filter, setFilter] = useState({
       categoryFilter: '',
@@ -23,7 +21,7 @@ function ProductManagement() {
       productTypeFilter: '',
       additionalOption: ''
     })
-    console.log(filter);
+   // console.log(filter);
     const [searchData, setSearchData] = useState('')
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
@@ -31,9 +29,13 @@ function ProductManagement() {
 
     //handle apply filter
     const handleApply =async () => {
-        const _id = "660277ef036d11f9e12e0ed8"
-    const result=await getProductsInProductsManagement(filter,_id,searchData)
-    console.log(result);
+        const token = localStorage.getItem('token')
+        const reqHeader = {
+            "Content-Type": "application/json",
+            "user_token": `Bearer ${token}`
+        }
+    const result=await getProductsInProductsManagement(filter,searchData,reqHeader)
+    //console.log(result);
     setProducts(result.data)
     }
     //handle clear
@@ -65,7 +67,7 @@ function ProductManagement() {
     handleApply()
     }, [searchData])
   return (
-    <>
+    <Box height={'90vh'}>
     <PageHead heading={'Products Management'} />
     <Stack direction={{ xs: 'column', md: 'row' }} justifyContent={'space-between'} mt={2} spacing={{ xs: 2, md: 0 }}>
       <Link to={'/add-product'}> <Button sx={{ marginTop: '15px', backgroundColor: 'green', color: 'white', '&:hover': { backgroundColor: 'green' }, width: { xs: 380, md: 200 }, borderRadius: '20px', padding: '10px' }}>
@@ -208,7 +210,7 @@ function ProductManagement() {
     </TableContainer>
     <Pagination count={Math.ceil(products.length / itemsPerPage)} onChange={(e, pageNumber) => setCurrentPage(pageNumber)} sx={{ margin: '30px 0px' }} color="primary" />
 
-  </>
+  </Box>
   )
 }
 

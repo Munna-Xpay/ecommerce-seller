@@ -17,8 +17,7 @@ function AddProduct() {
   //console.log(productDetails);
 
   const productDetails=productsData.find((item) => item._id === id)
-console.log(productDetails);
-  const [errors, setErrors] = useState(false)
+//console.log(productDetails);
 
   const navigate = useNavigate()
 
@@ -113,7 +112,12 @@ console.log(productDetails);
 
   const handleEdit = async (e) => {
     e.preventDefault();
-    const result=await productEdit(productData,id)
+    const token = localStorage.getItem('token')
+    const reqHeader = {
+        "Content-Type": "application/json",
+        "user_token": `Bearer ${token}`
+    }
+    const result=await productEdit(productData,id,reqHeader)
     if(result.status===200){
         toast.success('Product updated!')
     }
@@ -130,7 +134,12 @@ console.log(productDetails);
     imageData.append("images", image2 ? image2 : productData.images[1]);
     imageData.append("images", image3 ? image3 : productData.images[2]);
     imageData.append("images", image4 ? image4 : productData.images[3]);
-    const result=await productImageUpdate(imageData,id)
+    const token=localStorage.getItem('token')
+    const reqHeader = {
+      "Content-Type": "multipart/form-data",
+      "user_token": `Bearer ${token}`
+  }
+    const result=await productImageUpdate(imageData,reqHeader,id)
     if(result.status===200){
         toast.success('Product image updated!')
     }
@@ -140,13 +149,16 @@ console.log(productDetails);
   };
 
   const handleData=async()=>{
-    const _id = "660277ef036d11f9e12e0ed8"
-    const result=await getProductsInProductsManagement({},_id,'')
+    const token=localStorage.getItem('token')
+    const reqHeader = {
+      "Content-Type": "multipart/form-data",
+      "user_token": `Bearer ${token}`
+  }
+    const result=await getProductsInProductsManagement({},'',reqHeader)
      if(result.status===200){
       setProductsData(result.data)
      }
   }
-
 useEffect(()=>{
  handleData()
 },[])

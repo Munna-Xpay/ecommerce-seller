@@ -30,9 +30,13 @@ function ProductGrid() {
     const firstIndexOfItemInAPage = lastIndexOfItemInAPage - itemsPerPage;
 
     const getProductsInGrid = async () => {
-        const id = "660277ef036d11f9e12e0ed8"
-        const result = await getProductsGrid(sortData, id)
-        console.log(result);
+        const token=localStorage.getItem('token')
+        const reqHeader = {
+            "Content-Type": "application/json",
+            "user_token": `Bearer ${token}`
+        }
+        const result = await getProductsGrid( reqHeader,sortData)
+        //console.log(result);
         setProducts(result.data)
     }
 

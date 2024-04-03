@@ -22,9 +22,8 @@ export const updateOrderBySeller = async (id, reqHeader, data) => {
 }
 
 //product grid
-export const getProductsGrid = async (sortData, id) => {
-    const queryString = Object.keys(sortData).map(key => `${encodeURIComponent(key)}=${encodeURIComponent(sortData[key])}`).join('&');
-    return await commonApi('GET', `${BASE_URL}/api/seller/products-grid/${id}?${queryString}`);
+export const getProductsGrid = async (reqHeader,sortData) => {
+    return await commonApi('GET', `${BASE_URL}/api/seller/products-grid?categoryFilter=${sortData.categoryFilter}&sort_option=${sortData.sort_option}`,'',reqHeader);
 }
 
 //delete product
@@ -33,27 +32,16 @@ export const deleteProduct=async(id)=>{
 }
 
 //product edit
-export const productEdit=async(body,id)=>{
-    return await commonApi('PUT',`${BASE_URL}/api/seller/product-update/${id}`,body,"")
+export const productEdit=async(body,id,reqHeader)=>{
+    return await commonApi('PUT',`${BASE_URL}/api/seller/product-update/${id}`,body,reqHeader)
 }
 
 //product image edit
-export const productImageUpdate=async(body,id)=>{
-    const config = {
-        headers: {
-            'content-type': 'multipart/form-data'
-        }
-    };
-    return await commonApi('PUT',`${BASE_URL}/api/seller/product-image-update/${id}`,body,config)
+export const productImageUpdate=async(body,reqHeader,id)=>{
+    return await commonApi('PUT',`${BASE_URL}/api/seller/product-image-update/${id}`,body,reqHeader)
 }
 
 //product management
-export const getProductsInProductsManagement = async (filter, id, searchData) => {
-    let queryParams = Object.keys(filter).map(key => `${encodeURIComponent(key)}=${encodeURIComponent(filter[key])}`).join('&');
-    
-    // Include searchData in the query string if provided
-    if (searchData) {
-        queryParams += `&searchData=${encodeURIComponent(searchData)}`;
-    }
-    return await commonApi('GET', `${BASE_URL}/api/seller/products-management/${id}?${queryParams}`);
+export const getProductsInProductsManagement = async (filter, searchData,reqHeader) => {
+    return await commonApi('GET', `${BASE_URL}/api/seller/products-management?categoryFilter=${filter.categoryFilter}&stockFilter=${filter.stockFilter}&productTypeFilter=${filter.productTypeFilter}&additionalOption=${filter.additionalOption}&searchData=${searchData}`,'',reqHeader);
 }
