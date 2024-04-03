@@ -42,6 +42,12 @@ export const getSellerReviewStat = async (id, reqHeader) => {
 }
 
 //product grid
-export const getProductsGrid = async (headers, id) => {
-    return await commonApi('GET', `${BASE_URL}/api/seller/products-grid/${id}`, "", headers)
+export const getProductsGrid = async (sortData, id) => {
+    const queryString = Object.keys(sortData).map(key => `${encodeURIComponent(key)}=${encodeURIComponent(sortData[key])}`).join('&');
+    return await commonApi('GET', `${BASE_URL}/api/seller/products-grid/${id}?${queryString}`);
+}
+
+//delete product
+export const deleteProduct=async(id)=>{
+    return await commonApi('DELETE',`${BASE_URL}/api/product/delete/${id}`,{},"")
 }
