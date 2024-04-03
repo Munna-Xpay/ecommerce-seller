@@ -18,6 +18,7 @@ function AddProduct() {
 
   const productDetails=productsData.find((item) => item._id === id)
 //console.log(productDetails);
+  const [errors, setErrors] = useState(false)
 
   const navigate = useNavigate()
 
@@ -159,6 +160,7 @@ function AddProduct() {
       setProductsData(result.data)
      }
   }
+
 useEffect(()=>{
  handleData()
 },[])
