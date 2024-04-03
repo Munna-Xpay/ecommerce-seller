@@ -15,19 +15,22 @@ import Transactions from './pages/Transactions';
 import PageNotFound from './pages/PageNotFound';
 import { Box, Container, Divider, Stack } from '@mui/material';
 import Sidebar from './components/Sidebar';
+import { useRecoilState } from 'recoil';
+import { sellerState } from './recoil/atoms/sellerState';
 
 function App() {
-  const admin = true
+  const [seller, setSeller] = useRecoilState(sellerState)
+
   return (
     <>
       <Header />
       <Stack direction={'row'}>
-        {admin &&
+        {seller?._id &&
           <Box sx={{ display: { xs: 'none', md: 'block' } }}>
             <Sidebar />
           </Box>
         }
-        <Container maxWidth>
+        <Container maxWidth sx={{height:'90vh', overflow:'scroll'}}>
           <Routes>
             <Route path='/' element={<Login />} />
             <Route path='/top-product' element={<TopProducts />} />
