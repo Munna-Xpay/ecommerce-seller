@@ -21,6 +21,26 @@ export const updateOrderBySeller = async (id, reqHeader, data) => {
     return await commonApi('put', `${BASE_URL}/api/admin/update-order-by-seller/${id}`, data, reqHeader)
 }
 
+//update seller
+export const updateSeller = async (id, reqHeader, data) => {
+    return await commonApi('put', `${BASE_URL}/api/admin/update-seller/${id}`, data, reqHeader)
+}
+
+//update seller company icon
+export const updateSellerCompanyIcon = async (id, reqHeader, data) => {
+    return await commonApi('put', `${BASE_URL}/api/admin/update-seller-company-icon/${id}`, data, reqHeader)
+}
+
+//update seller password
+export const updateSellerPassword = async (id, reqHeader, data) => {
+    return await commonApi('put', `${BASE_URL}/api/admin/update-password-seller/${id}`, data, reqHeader)
+}
+
+//get seller review stat
+export const getSellerReviewStat = async (id, reqHeader) => {
+    return await commonApi('get', `${BASE_URL}/api/admin/get-seller-review-stat/${id}`, '', reqHeader)
+}
+
 //product grid
 export const getProductsGrid = async (headers, id) => {
     return await commonApi('GET', `${BASE_URL}/api/seller/products-grid/${id}`, "", headers)
