@@ -10,16 +10,19 @@ import { useRecoilState } from 'recoil';
 import { productsGrid } from '../recoil/atoms/productState';
 import { deleteProduct, getProductsGrid } from '../services/allApi';
 import { BASE_URL } from '../services/baseUrl';
+import { useNavigate } from 'react-router-dom';
 
 
 function ProductGrid() {
     const [products, setProducts] = useRecoilState(productsGrid)
-    console.log(products);
+   // console.log(products);
     const [sortData, setSortData] = useState({
         categoryFilter: "",
         sort_option: "Best_selling"
     })
    // console.log(sortData);
+   const navigate=useNavigate()
+
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
 
@@ -41,6 +44,10 @@ function ProductGrid() {
         const response=await deleteProduct(id)
             toast.success('Product deleted!')
             getProductsInGrid()
+      }
+
+      const handleEdit=(id)=>{
+        navigate(`/edit-product/${id}`)
       }
 
     return (
@@ -96,7 +103,7 @@ function ProductGrid() {
                             <Typography fontWeight={'bold'} fontSize={15} color={'gray'}>Regular price :<span>${product.original_price}</span></Typography>
                             <Typography fontWeight={'bold'} fontSize={15} color={'gray'}>Sale price :<span>${product.discounted_price}</span></Typography>
                             <Stack direction={'row'} marginTop={3}>
-                                <Button sx={{ borderRadius: '20px', fontWeight: 'bold', width: { xs: 200 } }} variant='outlined'><CreateIcon sx={{ width: '15px' }} />Edit</Button>
+                                <Button onClick={()=>handleEdit(product._id)} sx={{ borderRadius: '20px', fontWeight: 'bold', width: { xs: 200 } }} variant='outlined'><CreateIcon sx={{ width: '15px' }} />Edit</Button>
                                 <Button onClick={()=>handleDelete(product._id)} sx={{ marginLeft: '5px', borderRadius: '20px', fontWeight: 'bold', width: { xs: 200 } }} color='error' variant='outlined'>Delete</Button>
                             </Stack>
                         </Stack>

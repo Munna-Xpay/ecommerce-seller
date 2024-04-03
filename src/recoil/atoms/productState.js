@@ -4,3 +4,8 @@ export const productsGrid=atom({
     key:'productsGrid',
     default:[]
 })
+
+export const productsManagement=atom({
+    key:'productManagement',
+    default:[]
+})
