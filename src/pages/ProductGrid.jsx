@@ -15,13 +15,13 @@ import { useNavigate } from 'react-router-dom';
 
 function ProductGrid() {
     const [products, setProducts] = useRecoilState(productsGrid)
-   // console.log(products);
+    // console.log(products);
     const [sortData, setSortData] = useState({
         categoryFilter: "",
         sort_option: "Best_selling"
     })
-   // console.log(sortData);
-   const navigate=useNavigate()
+    // console.log(sortData);
+    const navigate = useNavigate()
 
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
@@ -30,12 +30,12 @@ function ProductGrid() {
     const firstIndexOfItemInAPage = lastIndexOfItemInAPage - itemsPerPage;
 
     const getProductsInGrid = async () => {
-        const token=localStorage.getItem('token')
+        const token = localStorage.getItem('token')
         const reqHeader = {
             "Content-Type": "application/json",
             "user_token": `Bearer ${token}`
         }
-        const result = await getProductsGrid( reqHeader,sortData)
+        const result = await getProductsGrid(reqHeader, sortData)
         //console.log(result);
         setProducts(result.data)
     }
@@ -45,14 +45,14 @@ function ProductGrid() {
     }, [sortData])
 
     const handleDelete = async (id) => {
-        const response=await deleteProduct(id)
-            toast.success('Product deleted!')
-            getProductsInGrid()
-      }
+        const response = await deleteProduct(id)
+        toast.success('Product deleted!')
+        getProductsInGrid()
+    }
 
-      const handleEdit=(id)=>{
+    const handleEdit = (id) => {
         navigate(`/edit-product/${id}`)
-      }
+    }
 
     return (
         <>
@@ -67,14 +67,14 @@ function ProductGrid() {
                 <Stack direction={{ xs: 'column', md: 'row' }} spacing={3} sx={{ marginTop: { xs: 5, md: 0 } }}>
 
                     <FormControl size='small' sx={{ width: { xs: '300', md: 150 } }}>
-                    <InputLabel id="demo-simple-select-label">Category</InputLabel>
+                        <InputLabel id="demo-simple-select-label">Category</InputLabel>
 
                         <Select
                             sx={{ bgcolor: 'white' }}
                             value={sortData.categoryFilter}
                             onChange={(e) => setSortData({ ...sortData, ["categoryFilter"]: e.target.value })}
                         >
-                            
+
                             <MenuItem value={'Electronics'}>Electronics</MenuItem>
                             <MenuItem value={'Fashion'}>Fashion</MenuItem>
                             <MenuItem value={'Groceries'}>Groceries</MenuItem>
@@ -107,8 +107,8 @@ function ProductGrid() {
                             <Typography fontWeight={'bold'} fontSize={15} color={'gray'}>Regular price :<span>${product.original_price}</span></Typography>
                             <Typography fontWeight={'bold'} fontSize={15} color={'gray'}>Sale price :<span>${product.discounted_price}</span></Typography>
                             <Stack direction={'row'} marginTop={3}>
-                                <Button onClick={()=>handleEdit(product._id)} sx={{ borderRadius: '20px', fontWeight: 'bold', width: { xs: 200 } }} variant='outlined'><CreateIcon sx={{ width: '15px' }} />Edit</Button>
-                                <Button onClick={()=>handleDelete(product._id)} sx={{ marginLeft: '5px', borderRadius: '20px', fontWeight: 'bold', width: { xs: 200 } }} color='error' variant='outlined'>Delete</Button>
+                                <Button onClick={() => handleEdit(product._id)} sx={{ borderRadius: '20px', fontWeight: 'bold', width: { xs: 200 } }} variant='outlined'><CreateIcon sx={{ width: '15px' }} />Edit</Button>
+                                <Button onClick={() => handleDelete(product._id)} sx={{ marginLeft: '5px', borderRadius: '20px', fontWeight: 'bold', width: { xs: 200 } }} color='error' variant='outlined'>Delete</Button>
                             </Stack>
                         </Stack>
                     </Grid>
