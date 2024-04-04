@@ -101,7 +101,7 @@ function ProductGrid() {
                     <Grid item xs={12} md={2.5}>
                         <Stack spacing={1} boxShadow={4} borderRadius={2} bgcolor={'white'} padding={3} sx={{ width: { xs: 350, md: 190 } }}>
                             <Box border={1} borderColor={'#f1f1f1'} marginBottom={2} textAlign={'center'}> <img width={170} height={130} src={`${BASE_URL}/uploadedFiles/${product?.thumbnail}`} alt="" /></Box>
-                            <Typography fontWeight={'bold'} fontSize={16} > {product.title.length > 20 ? `${product.title.slice(0, 20)}...` : product.title}</Typography>
+                            <Typography fontWeight={'bold'} fontSize={16} > {product.title.length > 18 ? `${product.title.slice(0, 18)}...` : product.title}</Typography>
                             <Typography fontWeight={'bold'} fontSize={15} color={'#0dd1b0'}>Available :<span>{product.stockQuantity}</span></Typography>
                             <Typography fontWeight={'bold'} fontSize={15} color={'darkblue'}>Already sold :<span>{product.product_sold}</span></Typography>
                             <Typography fontWeight={'bold'} fontSize={15} color={'gray'}>Regular price :<span>${product.original_price}</span></Typography>

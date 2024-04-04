@@ -60,3 +60,8 @@ export const getProductsByCategory=async(reqHeader)=>{
 export const getSellerProductsByCategory=async(reqHeader)=>{
     return await commonApi('GET',`${BASE_URL}/api/seller/seller-category`,'',reqHeader)
 }
+
+//add product
+export const sellerAddProduct=async(body,reqHeader)=>{
+    return await commonApi('POST',`${BASE_URL}/api/product/add`,body,reqHeader)
+}

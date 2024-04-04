@@ -34,11 +34,13 @@ function TopProducts() {
     <PageHead heading={'Top Products'}/>
      <TopProductsCategory />
      <Grid container mt={4}>
-
+{categoryProducts?.some(product=>product.category==='Electronics')?(
        <Grid item xs={12} md={5.5}>
          <Stack direction={'row'} spacing={1}><LaptopMacIcon sx={{ backgroundColor: '#035ECF', color: 'white', padding: '5px', borderRadius: '3px', height: '20px', width: '20px' }} /> <Typography fontSize={20} fontWeight={'bold'} >Electronics</Typography></Stack>
          <TopProductsElectronics />
-       </Grid>
+       </Grid>):null
+}
+{categoryProducts?.some(product=>product.category==='Fashion')?(
        <Grid item sx={{
          marginLeft: {
            xs: 0,
@@ -47,7 +49,9 @@ function TopProducts() {
        }} xs={12} md={5.5}>
          <Stack direction={'row'} spacing={1}><CheckroomIcon sx={{ backgroundColor: '#ff5470', color: 'white', padding: '5px', borderRadius: '3px', height: '20px', width: '20px' }}/><Typography fontSize={20} fontWeight={'bold'} >Fashion</Typography></Stack>
          <TopProductsFashion />
-       </Grid>
+       </Grid>):null
+}
+{categoryProducts?.some(product=>product.category==='Groceries')?(
        <Grid item sx={{
          marginLeft: {
            xs: 0,
@@ -56,7 +60,8 @@ function TopProducts() {
        }} xs={12} md={5.5}>
          <Stack direction={'row'} spacing={1}><RestaurantIcon sx={{ backgroundColor: 'orange', color: 'white', padding: '5px', borderRadius: '3px', height: '20px', width: '20px' }} /> <Typography fontSize={20} fontWeight={'bold'} >Groceries</Typography></Stack>
          <TopProductsGroceries />
-       </Grid>
+       </Grid>):null
+}
      </Grid>
    </>
   )

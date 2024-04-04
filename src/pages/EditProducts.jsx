@@ -8,20 +8,26 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { productsManagement } from '../recoil/atoms/productState';
 import { BASE_URL } from '../services/baseUrl';
 import { getProductsInProductsManagement, productEdit, productImageUpdate } from '../services/allApi';
+import PageHead from '../components/PageHead';
+import { productValidationSchema } from '../formValidation/ProductValidation';
 
 function AddProduct() {
 
   const { id } = useParams()
   // console.log(id);
   const [productsData,setProductsData] = useRecoilState(productsManagement)
-  //console.log(productDetails);
+  console.log(productsData);
 
   const productDetails=productsData.find((item) => item._id === id)
 //console.log(productDetails);
+
   const [errors, setErrors] = useState(false)
-
-  const navigate = useNavigate()
-
+  const [filter, setFilter] = useState({
+    categoryFilter: '',
+    stockFilter: '',
+    productTypeFilter: '',
+    additionalOption: ''
+  })
   //productdata
   const [productData, setProductData] = useState({
     features: []
@@ -113,20 +119,29 @@ function AddProduct() {
 
   const handleEdit = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem('token')
-    const reqHeader = {
-        "Content-Type": "application/json",
-        "user_token": `Bearer ${token}`
-    }
-    const result=await productEdit(productData,id,reqHeader)
-    if(result.status===200){
-        toast.success('Product updated!')
-    }
-    else{
-        toast.error(result.response.data)
+    try{
+      await productValidationSchema.validate(productData,{abortEarly:false})
+      const token = localStorage.getItem('token')
+      const reqHeader = {
+          "Content-Type": "application/json",
+          "user_token": `Bearer ${token}`
+      }
+      const result=await productEdit(productData,id,reqHeader)
+      if(result.status===200){
+          toast.success('Product updated!')
+      }
+      else{
+          toast.error(result.response.data)
+      }
+    }catch (err){
+      const newErrors = {};
+      err.inner.forEach(validationError => {
+        newErrors[validationError.path] = validationError.message;
+      });
+      setErrors(newErrors);
     }
   }
-
+console.log(errors);
   //handle product image edit
   const handleProductImageEdit =async() => {
     const imageData = new FormData();
@@ -152,10 +167,11 @@ function AddProduct() {
   const handleData=async()=>{
     const token=localStorage.getItem('token')
     const reqHeader = {
-      "Content-Type": "multipart/form-data",
+      "Content-Type": "application/json",
       "user_token": `Bearer ${token}`
   }
-    const result=await getProductsInProductsManagement({},'',reqHeader)
+    const result=await getProductsInProductsManagement(filter,'',reqHeader)
+    console.log(result);
      if(result.status===200){
       setProductsData(result.data)
      }
@@ -167,13 +183,14 @@ useEffect(()=>{
 
 
   return (
+    <>
+            <PageHead heading={'Product Editor'} />
     <Box mt={2} boxShadow={{ xs: 0, md: 3 }} bgcolor={'white'} p={{ xs: 0, md: 1 }} borderRadius={2}>
       <Typography fontSize={16} fontWeight={'bold'}>Product Settings</Typography>
       <Typography mt={3} fontSize={12} color={'gray'} fontWeight={'bold'}>Product Images</Typography>
       <Grid container spacing={{ xs: 0, md: 35 }}>
         <Grid item xs={12} md={6} direction={'row'}>
           <Stack direction={{ xs: 'column', md: 'row' }} spacing={3}>
-
             <label htmlFor='img1'>
               <Stack bgcolor={'#dedede'} sx={{ width: { xs: 378, md: 200 }, height: '235px' }} borderRadius={1}>
                 <input onChange={(e) => setImage1(e.target.files[0])} id='img1' style={{ display: 'none' }} type="file" />
@@ -422,6 +439,7 @@ useEffect(()=>{
                 <Button onClick={() => handleRemoveFeature(index)}>Remove</Button>
               </Stack>
             ))}
+        <FormHelperText sx={{ color: 'red' }}>{errors.features}</FormHelperText>
             <Button onClick={handleAddFeature}>Add Feature</Button>
           </Box>
 
@@ -433,7 +451,6 @@ useEffect(()=>{
             <Button onClick={() => window.history.back()} sx={{ marginTop: '15px', backgroundColor: '#1e2e4a', color: 'white', '&:hover': { backgroundColor: '#1e2e4a' }, width: '100px', borderRadius: '20px', padding: '10px' }}>
               Back
             </Button>
-
           </Stack>
         </Grid>
       </Grid>
@@ -446,6 +463,7 @@ useEffect(()=>{
         }}
       />
     </Box>
+    </>
   )
 }
 
