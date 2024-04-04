@@ -37,8 +37,8 @@ export const updateSellerPassword = async (id, reqHeader, data) => {
 }
 
 //get seller review stat
-export const getSellerReviewStat = async (id, reqHeader) => {
-    return await commonApi('get', `${BASE_URL}/api/admin/get-seller-review-stat/${id}`, '', reqHeader)
+export const getSellerReviewStat = async (id, reqHeader, sort) => {
+    return await commonApi('get', `${BASE_URL}/api/admin/get-seller-review-stat/${id}?${sort}=true`, '', reqHeader)
 }
 
 //product grid
@@ -48,6 +48,6 @@ export const getProductsGrid = async (sortData, id) => {
 }
 
 //delete product
-export const deleteProduct=async(id)=>{
-    return await commonApi('DELETE',`${BASE_URL}/api/product/delete/${id}`,{},"")
+export const deleteProduct = async (id) => {
+    return await commonApi('DELETE', `${BASE_URL}/api/product/delete/${id}`, {}, "")
 }

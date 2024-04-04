@@ -13,24 +13,7 @@ import toast from 'react-hot-toast';
 const ReviewsAndUsers = () => {
 
     const [reviewStat, setReviewStat] = useRecoilState(reviewState)
-    const [seller, setSeller] = useRecoilState(sellerState)
     console.log(reviewStat)
-    const rating = reviewStat?.avg_review?.toFixed(1)
-
-    useEffect(() => {
-        const token = localStorage.getItem('token')
-        const reqHeader = {
-            "Content-Type": "application/json",
-            "user_token": `Bearer ${token}`
-        }
-        seller._id && getSellerReviewStat(seller?._id, reqHeader).then(res => {
-            console.log(res)
-            setReviewStat(res.data)
-        }).catch(err => {
-            console.log(err)
-            toast.error("Something went wrong!")
-        })
-    }, [seller])
 
     return (
         <Grid container spacing={2} mt={2}>

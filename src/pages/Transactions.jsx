@@ -1,12 +1,14 @@
 import { FormControl, MenuItem, Select, Table, TableBody, TableCell, TableContainer, TableHead, Paper, TableRow, Stack, Typography } from '@mui/material'
 import React, { useState } from 'react'
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import PageHead from '../components/PageHead';
 
 
 function Transactions() {
   const [sort, setSort] = useState('recent')
   return (
     <Stack minHeight={'100vh'}>
+      <PageHead heading='Transactions' />
       <Stack direction={{ xs: 'column', md: 'row' }} justifyContent={{ xs: 'center', md: 'end' }} sx={{ marginTop: { xs: 5, md: 2 } }}>
         <FormControl size='small' sx={{ width: { xs: 379, md: 200 } }}>
           <Typography>View transactions : 6/12</Typography>
