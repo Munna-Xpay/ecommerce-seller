@@ -21,6 +21,26 @@ export const updateOrderBySeller = async (id, reqHeader, data) => {
     return await commonApi('put', `${BASE_URL}/api/admin/update-order-by-seller/${id}`, data, reqHeader)
 }
 
+//update seller
+export const updateSeller = async (id, reqHeader, data) => {
+    return await commonApi('put', `${BASE_URL}/api/admin/update-seller/${id}`, data, reqHeader)
+}
+
+//update seller company icon
+export const updateSellerCompanyIcon = async (id, reqHeader, data) => {
+    return await commonApi('put', `${BASE_URL}/api/admin/update-seller-company-icon/${id}`, data, reqHeader)
+}
+
+//update seller password
+export const updateSellerPassword = async (id, reqHeader, data) => {
+    return await commonApi('put', `${BASE_URL}/api/admin/update-password-seller/${id}`, data, reqHeader)
+}
+
+//get seller review stat
+export const getSellerReviewStat = async (id, reqHeader, sort) => {
+    return await commonApi('get', `${BASE_URL}/api/admin/get-seller-review-stat/${id}?${sort}=true`, '', reqHeader)
+}
+
 //product grid
 export const getProductsGrid = async (reqHeader,sortData) => {
     return await commonApi('GET', `${BASE_URL}/api/seller/products-grid?categoryFilter=${sortData.categoryFilter}&sort_option=${sortData.sort_option}`,'',reqHeader);

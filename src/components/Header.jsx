@@ -13,11 +13,12 @@ import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import Sidebar from '../components/Sidebar'
-import { Button, Drawer, Stack } from '@mui/material';
+import { Avatar, Button, Drawer, Stack } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { sellerById } from '../services/allApi';
 import { sellerState } from '../recoil/atoms/sellerState';
+import { BASE_URL } from '../services/baseUrl';
 
 
 
@@ -175,7 +176,7 @@ export default function PrimarySearchAppBar() {
                     </Stack>
                     <Box sx={{ flexGrow: 1 }} />
                     <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                        {seller ?
+                        {seller._id ?
                             <>
                                 <IconButton size="large" aria-label="show 4 new mails" color="inherit">
                                     <Badge badgeContent={4} color="error">
@@ -201,7 +202,8 @@ export default function PrimarySearchAppBar() {
                                         aria-haspopup="true"
                                         color="inherit"
                                     >
-                                        <AccountCircle />
+                                        <Avatar sx={{ width: '40px', height: '40px' }} src={`${BASE_URL}/uploadedFiles/${seller?.company_icon}`} />
+                                        {/* <AccountCircle /> */}
                                     </IconButton></Link>
                             </> : <Link to={'/'}>
                                 <Button variant='text' sx={{ color: '#efefef' }}>Login</Button>
