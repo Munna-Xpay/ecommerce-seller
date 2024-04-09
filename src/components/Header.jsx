@@ -25,7 +25,7 @@ export default function PrimarySearchAppBar() {
 
     const navigate = useNavigate()
     const [seller, setSeller] = useRecoilState(sellerState)
-    console.log(seller)
+   // console.log(seller)
     const [drawer, setDrawer] = useState(false)
     const [anchorEl, setAnchorEl] = useState(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
