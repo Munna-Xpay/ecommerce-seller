@@ -41,6 +41,11 @@ export const getSellerReviewStat = async (id, reqHeader, sort) => {
     return await commonApi('get', `${BASE_URL}/api/admin/get-seller-review-stat/${id}?${sort}=true`, '', reqHeader)
 }
 
+//get response notifications
+export const getResponseNotifications = async (id, reqHeader) => {
+    return await commonApi('get', `${BASE_URL}/api/admin/get-response-notification/${id}`, '', reqHeader)
+}
+
 //product grid
 export const getProductsGrid = async (reqHeader,sortData) => {
     return await commonApi('GET', `${BASE_URL}/api/seller/products-grid?categoryFilter=${sortData.categoryFilter}&sort_option=${sortData.sort_option}`,'',reqHeader);

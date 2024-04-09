@@ -14,14 +14,15 @@ const ReviewsAndUsers = () => {
 
     const [reviewStat, setReviewStat] = useRecoilState(reviewState)
     console.log(reviewStat)
+    let avg = reviewStat?.avg_review
 
     return (
         <Grid container spacing={2} mt={2}>
             <Grid item xs={12} md={2}>
                 <Paper>
                     <Stack p={2} spacing={1} height={'170px'} justifyContent={'center'} alignItems={'center'}>
-                        <Rating precision={0.5} readOnly value={reviewStat?.avg_review?.toFixed(1)} />
-                        <Typography variant='h4' sx={{ fontWeight: 'bold' }} >{reviewStat?.avg_review?.toFixed(1)}</Typography>
+                        <Rating precision={0.5} readOnly value={avg ? avg?.toFixed(1) : 0} />
+                        <Typography variant='h4' sx={{ fontWeight: 'bold' }} >{avg ? avg?.toFixed(1) : 0}</Typography>
                         <Typography variant='h6' sx={{ fontWeight: 'bold' }} >Review Score</Typography>
                     </Stack>
                 </Paper>
@@ -56,16 +57,20 @@ const ReviewsAndUsers = () => {
             <Grid item xs={12} md={4} >
                 <Paper>
                     <Stack p={2} spacing={1} height={'170px'} justifyContent={'center'} alignItems={'center'}>
-                        {reviewStat?.rating_stat?.map(item => (
-                            item.star && <Stack width={'100%'} spacing={1} direction={'row'} alignItems={'center'}>
-                                <Stack direction={'row'} alignItems={'center'}>
-                                    <Typography sx={{ fontWeight: 'bold' }}>{item.star}</Typography>
-                                    <StarIcon color='warning' />
+                        {reviewStat?.rating_stat?.length > 1
+                            ?
+                            reviewStat?.rating_stat?.map(item => (
+                                item.star && <Stack width={'100%'} spacing={1} direction={'row'} alignItems={'center'}>
+                                    <Stack direction={'row'} alignItems={'center'}>
+                                        <Typography sx={{ fontWeight: 'bold' }}>{item.star}</Typography>
+                                        <StarIcon color='warning' />
+                                    </Stack>
+                                    <LinearProgress sx={{ flex: '1', height: '10px', borderRadius: '50px' }} color='warning' value={Math.floor((item.total_rating / reviewStat?.total_rating) * 100)} fourColor variant="determinate" />
+                                    <Typography sx={{ fontWeight: 'bold' }}>{Math.floor((item.total_rating / reviewStat?.total_rating) * 100)}%</Typography>
                                 </Stack>
-                                <LinearProgress sx={{ flex: '1', height: '10px', borderRadius: '50px' }} color='warning' value={Math.floor((item.total_rating / reviewStat?.total_rating) * 100)} fourColor variant="determinate" />
-                                <Typography sx={{ fontWeight: 'bold' }}>{Math.floor((item.total_rating / reviewStat?.total_rating) * 100)}%</Typography>
-                            </Stack>
-                        ))
+                            ))
+                            :
+                            <Typography variant='h6' color={'secondary'}>Dont have any reviews stat!</Typography>
                         }
                     </Stack>
                 </Paper>
