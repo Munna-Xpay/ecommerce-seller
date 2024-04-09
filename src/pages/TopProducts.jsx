@@ -44,7 +44,7 @@ function TopProducts() {
           <Grid item sx={{
             marginLeft: {
               xs: 0,
-              md: 10
+              md: 0
             }
           }} xs={12} md={5.5}>
             <Stack direction={'row'} spacing={1}><CheckroomIcon sx={{ backgroundColor: '#ff5470', color: 'white', padding: '5px', borderRadius: '3px', height: '20px', width: '20px' }} /><Typography fontSize={20} fontWeight={'bold'} >Fashion</Typography></Stack>

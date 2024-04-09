@@ -17,7 +17,7 @@ function TopProductsCategory() {
         const result=await getProductPriceByCategory(reqHeader)
         setCategoryTotalPrice(result.data)
     }
-    const sortedCategoryData = categoryTotalPrice.slice().sort((a, b) => b.total_price - a.total_price);
+    const sortedCategoryData = categoryTotalPrice.sort((a, b) => b.total_price - a.total_price);
     // Get the highest total price
     const highestTotalPrice = categoryTotalPrice.map((i) => i.total_price).reduce((a, b) => a + b, 0)
     //console.log(highestTotalPrice);

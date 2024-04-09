@@ -90,3 +90,8 @@ export const getSellerProductsByCategory=async(reqHeader)=>{
 export const sellerAddProduct=async(body,reqHeader)=>{
     return await commonApi('POST',`${BASE_URL}/api/product/add`,body,reqHeader)
 }
+
+//add notification
+export const addNotification=async (body,reqHeader)=>{
+    return await commonApi('POST',`${BASE_URL}/api/admin/add-notification`,body,reqHeader)
+}
