@@ -10,16 +10,19 @@ import { useRecoilState } from 'recoil';
 import { productsGrid } from '../recoil/atoms/productState';
 import { deleteProduct, getProductsGrid } from '../services/allApi';
 import { BASE_URL } from '../services/baseUrl';
+import { useNavigate } from 'react-router-dom';
 
 
 function ProductGrid() {
     const [products, setProducts] = useRecoilState(productsGrid)
-    console.log(products);
+    // console.log(products);
     const [sortData, setSortData] = useState({
         categoryFilter: "",
         sort_option: "Best_selling"
     })
-   // console.log(sortData);
+    // console.log(sortData);
+    const navigate = useNavigate()
+
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
 
@@ -27,9 +30,13 @@ function ProductGrid() {
     const firstIndexOfItemInAPage = lastIndexOfItemInAPage - itemsPerPage;
 
     const getProductsInGrid = async () => {
-        const id = "660277ef036d11f9e12e0ed8"
-        const result = await getProductsGrid(sortData, id)
-        console.log(result);
+        const token = localStorage.getItem('token')
+        const reqHeader = {
+            "Content-Type": "application/json",
+            "user_token": `Bearer ${token}`
+        }
+        const result = await getProductsGrid(reqHeader, sortData)
+        //console.log(result);
         setProducts(result.data)
     }
 
@@ -38,10 +45,14 @@ function ProductGrid() {
     }, [sortData])
 
     const handleDelete = async (id) => {
-        const response=await deleteProduct(id)
-            toast.success('Product deleted!')
-            getProductsInGrid()
-      }
+        const response = await deleteProduct(id)
+        toast.success('Product deleted!')
+        getProductsInGrid()
+    }
+
+    const handleEdit = (id) => {
+        navigate(`/edit-product/${id}`)
+    }
 
     return (
         <>
@@ -56,14 +67,14 @@ function ProductGrid() {
                 <Stack direction={{ xs: 'column', md: 'row' }} spacing={3} sx={{ marginTop: { xs: 5, md: 0 } }}>
 
                     <FormControl size='small' sx={{ width: { xs: '300', md: 150 } }}>
-                    <InputLabel id="demo-simple-select-label">Category</InputLabel>
+                        <InputLabel id="demo-simple-select-label">Category</InputLabel>
 
                         <Select
                             sx={{ bgcolor: 'white' }}
                             value={sortData.categoryFilter}
                             onChange={(e) => setSortData({ ...sortData, ["categoryFilter"]: e.target.value })}
                         >
-                            
+
                             <MenuItem value={'Electronics'}>Electronics</MenuItem>
                             <MenuItem value={'Fashion'}>Fashion</MenuItem>
                             <MenuItem value={'Groceries'}>Groceries</MenuItem>
@@ -90,14 +101,14 @@ function ProductGrid() {
                     <Grid item xs={12} md={2.5}>
                         <Stack spacing={1} boxShadow={4} borderRadius={2} bgcolor={'white'} padding={3} sx={{ width: { xs: 350, md: 190 } }}>
                             <Box border={1} borderColor={'#f1f1f1'} marginBottom={2} textAlign={'center'}> <img width={170} height={130} src={`${BASE_URL}/uploadedFiles/${product?.thumbnail}`} alt="" /></Box>
-                            <Typography fontWeight={'bold'} fontSize={16} > {product.title.length > 20 ? `${product.title.slice(0, 20)}...` : product.title}</Typography>
+                            <Typography fontWeight={'bold'} fontSize={16} > {product.title.length > 18 ? `${product.title.slice(0, 18)}...` : product.title}</Typography>
                             <Typography fontWeight={'bold'} fontSize={15} color={'#0dd1b0'}>Available :<span>{product.stockQuantity}</span></Typography>
                             <Typography fontWeight={'bold'} fontSize={15} color={'darkblue'}>Already sold :<span>{product.product_sold}</span></Typography>
                             <Typography fontWeight={'bold'} fontSize={15} color={'gray'}>Regular price :<span>${product.original_price}</span></Typography>
                             <Typography fontWeight={'bold'} fontSize={15} color={'gray'}>Sale price :<span>${product.discounted_price}</span></Typography>
                             <Stack direction={'row'} marginTop={3}>
-                                <Button sx={{ borderRadius: '20px', fontWeight: 'bold', width: { xs: 200 } }} variant='outlined'><CreateIcon sx={{ width: '15px' }} />Edit</Button>
-                                <Button onClick={()=>handleDelete(product._id)} sx={{ marginLeft: '5px', borderRadius: '20px', fontWeight: 'bold', width: { xs: 200 } }} color='error' variant='outlined'>Delete</Button>
+                                <Button onClick={() => handleEdit(product._id)} sx={{ borderRadius: '20px', fontWeight: 'bold', width: { xs: 200 } }} variant='outlined'><CreateIcon sx={{ width: '15px' }} />Edit</Button>
+                                <Button onClick={() => handleDelete(product._id)} sx={{ marginLeft: '5px', borderRadius: '20px', fontWeight: 'bold', width: { xs: 200 } }} color='error' variant='outlined'>Delete</Button>
                             </Stack>
                         </Stack>
                     </Grid>
