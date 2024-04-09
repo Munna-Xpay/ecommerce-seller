@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Pagination, FormControl, Table, TableBody, TableCell, TableContainer, TableHead, Paper, TableRow, Grid, MenuItem, Select, Stack, Typography, Rating, InputLabel, } from '@mui/material'
+import { Pagination, FormControl, Table, TableBody, TableCell, TableContainer, TableHead, Paper, TableRow, Grid, MenuItem, Select, Stack, Typography, Rating, InputLabel, Box, } from '@mui/material'
 import FactCheckIcon from '@mui/icons-material/FactCheck';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import DoDisturbIcon from '@mui/icons-material/DoDisturb';
@@ -139,83 +139,90 @@ const Orders = () => {
                     </Stack>
                 </Grid>
             </Grid>
-            <TableContainer component={Paper} sx={{ marginTop: '15px' }}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                    <TableHead>
-                        <TableRow>
-                            {/* <TableCell sx={{ fontSize: '14px', color: '#035ECF' }}># ORDER</TableCell> */}
-                            <TableCell sx={{ fontSize: '14px', color: '#035ECF' }}>PRODUCT</TableCell>
-                            <TableCell sx={{ fontSize: '14px', color: '#035ECF' }}>CATEGORY</TableCell>
-                            <TableCell sx={{ fontSize: '14px', color: '#035ECF' }}>PRICE</TableCell>
-                            <TableCell sx={{ fontSize: '14px', color: '#035ECF' }}>ORDER DELIVERY</TableCell>
-                            <TableCell sx={{ fontSize: '14px', color: '#035ECF' }}>ORDER STATUS</TableCell>
-                            <TableCell sx={{ fontSize: '14px', color: '#035ECF' }}>RATING</TableCell>
-                            <TableCell sx={{ fontSize: '14px', color: '#035ECF' }}>ACTIONS</TableCell>
+            {orders.length > 0 ?
+                <TableContainer component={Paper} sx={{ marginTop: '15px' }}>
+                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                        <TableHead>
+                            <TableRow>
+                                {/* <TableCell sx={{ fontSize: '14px', color: '#035ECF' }}># ORDER</TableCell> */}
+                                <TableCell sx={{ fontSize: '14px', color: '#035ECF' }}>PRODUCT</TableCell>
+                                <TableCell sx={{ fontSize: '14px', color: '#035ECF' }}>CATEGORY</TableCell>
+                                <TableCell sx={{ fontSize: '14px', color: '#035ECF' }}>PRICE</TableCell>
+                                <TableCell sx={{ fontSize: '14px', color: '#035ECF' }}>ORDER DELIVERY</TableCell>
+                                <TableCell sx={{ fontSize: '14px', color: '#035ECF' }}>ORDER STATUS</TableCell>
+                                <TableCell sx={{ fontSize: '14px', color: '#035ECF' }}>RATING</TableCell>
+                                <TableCell sx={{ fontSize: '14px', color: '#035ECF' }}>ACTIONS</TableCell>
 
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {orders.slice(firstIndexOfItemInAPage, lastIndexOfItemInAPage).map((order, index) => (
-                            <TableRow
-                                key={index}
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                            >
-                                {/* <Typography fontWeight={'bold'}>{order._id}</Typography> */}
-                                <TableCell component="th" scope="row">
-                                    <Stack direction={'row'}><img width={70} height={55} src={`${BASE_URL}/uploadedFiles/${order?.products.product.thumbnail}`} alt="" /> <Stack marginLeft={1}>
-                                        <Typography fontWeight={'bold'}>{order.products.product.title}</Typography>
-                                        <Typography fontSize={13} color={'gray'}>Regular Price: {order.products.product.original_price}</Typography>
-                                        <Typography fontSize={13} color={'gray'}>Sale Price{order.products.product.discounted_price}</Typography>
-                                    </Stack>
-                                    </Stack>
-                                </TableCell>
-                                <TableCell sx={{ fontWeight: 'bold' }}> {order.products.product.category}</TableCell>
-                                <TableCell sx={{ fontWeight: 'bold' }}>{order.totalPrice}</TableCell>
-                                <TableCell sx={{ fontWeight: 'bold' }}>{order.shippingMethod}</TableCell>
-                                <TableCell sx={{ fontWeight: 'bold' }}><Typography sx={{
-                                    backgroundColor: (() => {
-                                        switch (order.orderStatus) {
-                                            case 'Ordered':
-                                                return '#f0ad4e';
-                                            case 'Confirmed':
-                                                return '#00ba9d';
-                                            case 'Canceled':
-                                                return 'red';
-                                            case 'Completed':
-                                                return '#035ecf';
-                                            case 'Shipped':
-                                                return '#f55505';
-                                            default:
-                                                return 'black';
-                                        }
-                                    })(),
-                                    borderRadius: '20px',
-                                    color: 'white',
-                                    width: '100px'
-                                }} p={1} textAlign={'center'}>{order.orderStatus}</Typography></TableCell>
-                                <TableCell sx={{ fontWeight: 'bold' }}><Rating name="read-only" value={order.products.product.review_star} readOnly /></TableCell>
-                                <TableCell sx={{ fontWeight: 'bold' }}>
-                                    <FormControl size='small' sx={{ width: { xs: 380, md: 160 } }}>
-                                        <InputLabel id="demo-simple-select-label">Order Status</InputLabel>
-
-                                        <Select
-                                            value={order?.orderStatus}
-                                            onChange={(e) => handleOrderUpdate(e, order._id)}
-                                        >
-                                            <MenuItem value={'Confirmed'}>Order confirmed</MenuItem>
-                                            <MenuItem value={'Canceled'}>Order canceled</MenuItem>
-                                            <MenuItem value={'Shipped'}>Order shipped</MenuItem>
-                                            <MenuItem value={'Completed'}>Order Completed</MenuItem>
-                                            <MenuItem value={'Refunded'}>Order refunded</MenuItem>
-                                        </Select>
-                                    </FormControl>
-                                </TableCell>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-            <Pagination count={Math.ceil(orders.length / itemsPerPage)} onChange={(e, pageNumber) => setCurrentPage(pageNumber)} sx={{ margin: '30px 0px' }} color="primary" />
+                        </TableHead>
+                        <TableBody>
+                            {orders.slice(firstIndexOfItemInAPage, lastIndexOfItemInAPage).map((order, index) => (
+                                <TableRow
+                                    key={index}
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                    {/* <Typography fontWeight={'bold'}>{order._id}</Typography> */}
+                                    <TableCell component="th" scope="row">
+                                        <Stack direction={'row'}><img width={70} height={55} style={{ objectFit: 'contain' }} src={`${BASE_URL}/uploadedFiles/${order?.products.product.thumbnail}`} alt="" /> <Stack marginLeft={1}>
+                                            <Typography fontWeight={'bold'}>{order.products.product.title}</Typography>
+                                            <Typography fontSize={13} color={'gray'}>Regular Price: {order.products.product.original_price}</Typography>
+                                            <Typography fontSize={13} color={'gray'}>Sale Price{order.products.product.discounted_price}</Typography>
+                                        </Stack>
+                                        </Stack>
+                                    </TableCell>
+                                    <TableCell sx={{ fontWeight: 'bold' }}> {order.products.product.category}</TableCell>
+                                    <TableCell sx={{ fontWeight: 'bold' }}>{order.totalPrice}</TableCell>
+                                    <TableCell sx={{ fontWeight: 'bold' }}>{order.shippingMethod}</TableCell>
+                                    <TableCell sx={{ fontWeight: 'bold' }}><Typography sx={{
+                                        backgroundColor: (() => {
+                                            switch (order.orderStatus) {
+                                                case 'Ordered':
+                                                    return '#f0ad4e';
+                                                case 'Confirmed':
+                                                    return '#00ba9d';
+                                                case 'Canceled':
+                                                    return 'red';
+                                                case 'Completed':
+                                                    return '#035ecf';
+                                                case 'Shipped':
+                                                    return '#f55505';
+                                                default:
+                                                    return 'black';
+                                            }
+                                        })(),
+                                        borderRadius: '20px',
+                                        color: 'white',
+                                        width: '100px'
+                                    }} p={1} textAlign={'center'}>{order.orderStatus}</Typography></TableCell>
+                                    <TableCell sx={{ fontWeight: 'bold' }}><Rating name="read-only" value={order.products.product.review_star} readOnly /></TableCell>
+                                    <TableCell sx={{ fontWeight: 'bold' }}>
+                                        <FormControl size='small' sx={{ width: { xs: 380, md: 160 } }}>
+                                            <InputLabel id="demo-simple-select-label">Order Status</InputLabel>
+
+                                            <Select
+                                                value={order?.orderStatus}
+                                                onChange={(e) => handleOrderUpdate(e, order._id)}
+                                            >
+                                                <MenuItem value={'Ordered'}>Ordered</MenuItem>
+                                                <MenuItem value={'Canceled'}>Order canceled</MenuItem>
+                                                <MenuItem value={'Shipped'}>Order shipped</MenuItem>
+                                                <MenuItem value={'Completed'}>Order Completed</MenuItem>
+                                                <MenuItem value={'Refunded'}>Order refunded</MenuItem>
+                                            </Select>
+                                        </FormControl>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+                :
+                <Stack alignItems={'center'}>
+                    <Box component={'img'} width={250} src='https://cdni.iconscout.com/illustration/premium/thumb/folder-is-empty-4064360-3363921.png' />
+                    <Typography variant='h6' color={'secondary'}>Customers have not purchased any products yet !</Typography>
+                </Stack>
+            }
+            {orders.length > 0 && <Pagination count={Math.ceil(orders.length / itemsPerPage)} onChange={(e, pageNumber) => setCurrentPage(pageNumber)} sx={{ margin: '30px 0px' }} color="primary" />}
 
             <Toaster />
         </Stack>
