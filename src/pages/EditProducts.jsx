@@ -16,7 +16,7 @@ function AddProduct() {
   const { id } = useParams()
   // console.log(id);
   const [productsData, setProductsData] = useRecoilState(productsManagement)
-  console.log(productsData);
+ // console.log(productsData);
 
   const productDetails = productsData.find((item) => item._id === id)
   //console.log(productDetails);

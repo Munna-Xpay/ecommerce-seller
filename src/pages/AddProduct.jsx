@@ -6,10 +6,15 @@ import toast, { Toaster } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { productValidationSchema } from '../formValidation/ProductValidation';
 import PageHead from '../components/PageHead';
-import { sellerAddProduct } from '../services/allApi';
+import { addNotification, sellerAddProduct } from '../services/allApi';
+import { useRecoilValue } from 'recoil';
+import { sellerState } from '../recoil/atoms/sellerState';
 
 function AddProduct() {
-
+  
+  //seller details
+  const seller=useRecoilValue(sellerState)
+//console.log(seller);
   const navigate = useNavigate()
   const [errors, setErrors] = useState(false)
   const [image1, setImage1] = useState('')
@@ -57,7 +62,7 @@ function AddProduct() {
     const { value, name } = e.target
     setProductData({ ...productData, [name]: value })
   }
-  //console.log(productData);
+  console.log(productData);
 
   // Handler for Jodit content change
   const handleDescriptionChange = (content) => {
@@ -68,12 +73,19 @@ function AddProduct() {
   }
 
 
+
   //add funct
   const handleAdd = async (e) => {
     e.preventDefault();
+    const allImages = [image1, image2, image3, image4];
     try {
       // Validate productData
-      await productValidationSchema.validate(productData, { abortEarly: false });
+      await productValidationSchema.validate({
+        ...productData,
+        images: allImages.filter(Boolean),
+        features: features
+      }, { abortEarly: false });
+      
       // Format features array
       const formattedFeatures = features.map(feature => ({
         key: feature.key,
@@ -103,6 +115,7 @@ function AddProduct() {
       formData.append('images', image3);
       formData.append('images', image4);
       formData.append('features', JSON.stringify(formattedFeatures));
+      formData.append('isActive', false);
 
       const token = localStorage.getItem('token')
       const reqHeader = {
@@ -118,6 +131,21 @@ function AddProduct() {
           title: '', about: '', stock: '', stockQuantity: '', product_type: '', discounted_price: '', original_price: '', features: [],
           category: '', manufacturer: '', ships_from: '', description: '', seller: '', thumbnail: '', images: []
         })
+          //notification
+  const notification={
+    username:seller.company_name,
+    userProPic:seller.company_icon,
+    notifyMsg:'Requesting for adding new product',
+    type:'Product',
+    item_id:result.data[0]._id,
+    userId:seller._id
+  }
+  const header = {
+    "Content-Type": "application/json",
+    "user_token": `Bearer ${token}`
+}
+  const res=await addNotification(notification,header)
+  console.log(res);
       }
       else {
         toast.error(result.response.data)
@@ -132,14 +160,16 @@ function AddProduct() {
       setErrors(newErrors);
     }
   };
-  console.log(errors);
+ console.log(errors);
+
+
   //thumbnail preview
   useEffect(() => {
     if (productData.thumbnail) {
       setThumbnailPreview(URL.createObjectURL(productData.thumbnail))
     }
-
   }, [productData.thumbnail])
+
 
   //images preview
   useEffect(() => {
@@ -223,9 +253,9 @@ function AddProduct() {
                 </Stack>
               </label>
             </Stack>
-            {(errors.images && !image1 && !image2 && !image3 && !image4) && (
-              <FormHelperText sx={{ color: 'red' }}>{errors.images}</FormHelperText>
-            )}
+            {errors.images && (
+  <FormHelperText sx={{ color: 'red' }}>{errors.images}</FormHelperText>
+)}
             <Stack width={{ xs: 380, md: 210 }}>
               <Typography mt={3} fontSize={12} color={'gray'} fontWeight={'bold'}>Product Thumbnail</Typography>
 
@@ -401,8 +431,8 @@ function AddProduct() {
                     <Button onClick={() => handleRemoveFeature(index)}>Remove</Button>
                   </Stack>
                 ))}
-                <FormHelperText sx={{ color: 'red' }}>{errors.features}</FormHelperText>
                 <Button onClick={handleAddFeature}>Add Feature</Button>
+                
               </Box>
             </Stack>
             <Stack direction={{ xs: 'column', md: 'row' }} textAlign={'center'} spacing={1} mt={2}>
