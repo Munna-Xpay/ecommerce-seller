@@ -104,7 +104,7 @@ const AllReviews = () => {
         <>
             <Paper sx={{ marginTop: '30px' }}>
                 <Stack direction={'row'} p={2} justifyContent={'space-between'} alignItems={'center'}>
-                    <Typography variant='h5' sx={{ fontWeight: 'bold' }}>Latest Accepted Reviews</Typography>
+                    <Typography variant='h5' sx={{ fontWeight: 'bold' }}>Latest Reviews</Typography>
                     <Box>
                         <FormControl>
                             <Select
@@ -125,7 +125,12 @@ const AllReviews = () => {
                 <TableContainer component={Paper}>
                     <Table sx={{ minWidth: 700 }} aria-label="customized table">
                         <TableBody>
-                            {showAllReviews}
+                            {showAllReviews ? showAllReviews :
+                                <Stack my={3} alignItems={'center'}>
+                                    <Box component={'img'} width={250} src='https://cdni.iconscout.com/illustration/premium/thumb/folder-is-empty-4064360-3363921.png' />
+                                    <Typography variant='h6' color={'secondary'}>Dont have any reviews to show !</Typography>
+                                </Stack>
+                            }
                         </TableBody>
                     </Table>
                 </TableContainer>

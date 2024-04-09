@@ -16,9 +16,11 @@ import Sidebar from '../components/Sidebar'
 import { Avatar, Button, Drawer, Stack } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { sellerById } from '../services/allApi';
+import { getResponseNotifications, sellerById } from '../services/allApi';
 import { sellerState } from '../recoil/atoms/sellerState';
 import { BASE_URL } from '../services/baseUrl';
+import Notifications from './Notifications';
+import { notificationState } from '../recoil/atoms/notificationState';
 
 
 
@@ -26,6 +28,7 @@ export default function PrimarySearchAppBar() {
 
     const navigate = useNavigate()
     const [seller, setSeller] = useRecoilState(sellerState)
+    const [notifications, setNotifications] = useRecoilState(notificationState)
     console.log(seller)
     const [drawer, setDrawer] = useState(false)
     const [anchorEl, setAnchorEl] = useState(null);
@@ -72,6 +75,20 @@ export default function PrimarySearchAppBar() {
         else if (!token) {
             navigate('/')
         }
+    }, [seller])
+
+    useEffect(() => {
+        const token = localStorage.getItem('token')
+        const reqHeader = {
+            "Content-Type": "application/json",
+            "user_token": `Bearer ${token}`
+        }
+        seller && getResponseNotifications(seller._id, reqHeader).then(res => {
+            console.log(res)
+            setNotifications(res.data)
+        }).catch(err => {
+            console.log(err)
+        })
     }, [seller])
 
     const menuId = 'primary-search-account-menu';
@@ -183,16 +200,16 @@ export default function PrimarySearchAppBar() {
                                         <MailIcon />
                                     </Badge>
                                 </IconButton>
-                                {/* <IconButton
+                                <IconButton
                                     onClick={toggleDrawer(true)}
                                     size="large"
                                     aria-label="show 17 new notifications"
                                     color="inherit"
                                 >
-                                    <Badge badgeContent={notifications.length} color="error">
+                                    <Badge badgeContent={2} color="error">
                                         <NotificationsIcon />
                                     </Badge>
-                                </IconButton> */}
+                                </IconButton>
                                 <Link to={'/profile'} style={{ color: 'white' }}>
                                     <IconButton
                                         size="large"
@@ -235,13 +252,13 @@ export default function PrimarySearchAppBar() {
             </Drawer>
 
 
-            {/* <Drawer
+            <Drawer
                 anchor='right'
                 open={open}
                 onClose={toggleDrawer(false)}
             >
                 <Notifications />
-            </Drawer> */}
+            </Drawer>
         </Box>
     );
 }
