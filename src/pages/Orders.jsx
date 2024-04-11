@@ -20,7 +20,7 @@ const Orders = () => {
     console.log(seller)
     const [sortData, setSortData] = useState({
         categoryFilter: "All",
-        sort_option: "A-Z"
+        sort_option: "latest"
     })
 
     const [status, setStatus] = useState('')
@@ -99,6 +99,7 @@ const Orders = () => {
                             value={sortData.sort_option}
                             onChange={(e) => setSortData({ ...sortData, ["sort_option"]: e.target.value })}
                         >
+                            <MenuItem selected value={'latest'}>Latest</MenuItem>
                             <MenuItem selected value={'A-Z'}>By name: A-Z</MenuItem>
                             <MenuItem value={'Z-A'}>By name: Z-A</MenuItem>
                             <MenuItem value={'rating_low_to_high'}>Rating: Low to High</MenuItem>
@@ -150,9 +151,9 @@ const Orders = () => {
                                 <TableCell sx={{ fontSize: '14px', color: '#035ECF' }}>PRICE</TableCell>
                                 <TableCell sx={{ fontSize: '14px', color: '#035ECF' }}>ORDER DELIVERY</TableCell>
                                 <TableCell sx={{ fontSize: '14px', color: '#035ECF' }}>ORDER STATUS</TableCell>
+                                <TableCell sx={{ fontSize: '14px', color: '#035ECF' }}>ORDERED DATE</TableCell>
                                 <TableCell sx={{ fontSize: '14px', color: '#035ECF' }}>RATING</TableCell>
                                 <TableCell sx={{ fontSize: '14px', color: '#035ECF' }}>ACTIONS</TableCell>
-
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -163,11 +164,13 @@ const Orders = () => {
                                 >
                                     {/* <Typography fontWeight={'bold'}>{order._id}</Typography> */}
                                     <TableCell component="th" scope="row">
-                                        <Stack direction={'row'}><img width={70} height={55} style={{ objectFit: 'contain' }} src={`${BASE_URL}/uploadedFiles/${order?.products.product.thumbnail}`} alt="" /> <Stack marginLeft={1}>
-                                            <Typography fontWeight={'bold'}>{order.products.product.title}</Typography>
-                                            <Typography fontSize={13} color={'gray'}>Regular Price: {order.products.product.original_price}</Typography>
-                                            <Typography fontSize={13} color={'gray'}>Sale Price{order.products.product.discounted_price}</Typography>
-                                        </Stack>
+                                        <Stack direction={'row'} width={'270px'}>
+                                            <img width={70} height={55} style={{ objectFit: 'contain' }} src={`${BASE_URL}/uploadedFiles/${order?.products.product.thumbnail}`} alt="" />
+                                            <Stack marginLeft={1}>
+                                                <Typography fontWeight={'bold'}>{order.products.product.title}</Typography>
+                                                <Typography fontSize={13} color={'gray'}>Regular Price: {order.products.product.original_price}</Typography>
+                                                <Typography fontSize={13} color={'gray'}>Sale Price{order.products.product.discounted_price}</Typography>
+                                            </Stack>
                                         </Stack>
                                     </TableCell>
                                     <TableCell sx={{ fontWeight: 'bold' }}> {order.products.product.category}</TableCell>
@@ -194,11 +197,16 @@ const Orders = () => {
                                         color: 'white',
                                         width: '100px'
                                     }} p={1} textAlign={'center'}>{order.orderStatus}</Typography></TableCell>
+                                    <TableCell sx={{ fontWeight: 'bold' }}>
+                                        <Stack>
+                                            <Typography> {new Date(order.createdAt).toLocaleDateString('en-US')}</Typography>
+                                            <Typography variant='body2'> {new Date(order.createdAt).toLocaleTimeString()}</Typography>
+                                        </Stack>
+                                    </TableCell>
                                     <TableCell sx={{ fontWeight: 'bold' }}><Rating name="read-only" value={order.products.product.review_star} readOnly /></TableCell>
                                     <TableCell sx={{ fontWeight: 'bold' }}>
                                         <FormControl size='small' sx={{ width: { xs: 380, md: 160 } }}>
                                             <InputLabel id="demo-simple-select-label">Order Status</InputLabel>
-
                                             <Select
                                                 value={order?.orderStatus}
                                                 onChange={(e) => handleOrderUpdate(e, order._id)}
@@ -225,7 +233,7 @@ const Orders = () => {
             {orders.length > 0 && <Pagination count={Math.ceil(orders.length / itemsPerPage)} onChange={(e, pageNumber) => setCurrentPage(pageNumber)} sx={{ margin: '30px 0px' }} color="primary" />}
 
             <Toaster />
-        </Stack>
+        </Stack >
     )
 }
 
