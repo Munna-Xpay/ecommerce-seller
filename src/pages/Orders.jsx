@@ -13,11 +13,11 @@ import { orderState } from '../recoil/atoms/orderState';
 import { BASE_URL } from '../services/baseUrl';
 import toast, { Toaster } from 'react-hot-toast';
 
-const Orders = () => {
+const Orders = ({ socket }) => {
 
     const [seller, setSeller] = useRecoilState(sellerState)
     const [orders, setOrders] = useRecoilState(orderState)
-    console.log(seller)
+    console.log(orders)
     const [sortData, setSortData] = useState({
         categoryFilter: "All",
         sort_option: "latest"
@@ -58,7 +58,7 @@ const Orders = () => {
     const lastIndexOfItemInAPage = itemsPerPage * currentPage;
     const firstIndexOfItemInAPage = lastIndexOfItemInAPage - itemsPerPage;
 
-    const handleOrderUpdate = async (e, id) => {
+    const handleOrderUpdate = async (e, id, userId, title) => {
         const orderStatus = e.target.value
         try {
             const token = localStorage.getItem('token')
@@ -70,6 +70,7 @@ const Orders = () => {
             console.log(res)
             toast.success(res.data.message)
             getOrders()
+            socket.emit("sendUpdate", { receiverId: userId, msg: `${title} has ${e.target.value}` })
         } catch (err) {
             console.log(err)
             toast.error("Failed to update order status")
@@ -209,7 +210,7 @@ const Orders = () => {
                                             <InputLabel id="demo-simple-select-label">Order Status</InputLabel>
                                             <Select
                                                 value={order?.orderStatus}
-                                                onChange={(e) => handleOrderUpdate(e, order._id)}
+                                                onChange={(e) => handleOrderUpdate(e, order._id, order.userId, order.products.product.title)}
                                             >
                                                 <MenuItem value={'Ordered'}>Ordered</MenuItem>
                                                 <MenuItem value={'Canceled'}>Order canceled</MenuItem>
