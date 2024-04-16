@@ -21,10 +21,10 @@ import { sellerState } from '../recoil/atoms/sellerState';
 import { BASE_URL } from '../services/baseUrl';
 import Notifications from './Notifications';
 import { notificationState } from '../recoil/atoms/notificationState';
+import toast, { Toaster } from 'react-hot-toast';
 
 
-
-export default function PrimarySearchAppBar() {
+export default function PrimarySearchAppBar({ socket }) {
 
     const navigate = useNavigate()
     const [seller, setSeller] = useRecoilState(sellerState)
@@ -36,6 +36,20 @@ export default function PrimarySearchAppBar() {
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
     const [open, setOpen] = useState(false);
+    const [notifyMsg, setNotifyMsg] = useState("")
+
+    useEffect(() => {
+        socket?.on("getNotify", (msg) => {
+            setNotifyMsg(msg)
+            // toast.success(msg)
+            console.log(msg)
+        })
+    }, [socket])
+
+    useEffect(() => {
+        notifyMsg && toast.success(notifyMsg, { duration: 5000 })
+    }, [notifyMsg])
+
 
     const toggleDrawer = (isOpen) => () => {
         setOpen(isOpen);
@@ -206,7 +220,7 @@ export default function PrimarySearchAppBar() {
                                     aria-label="show 17 new notifications"
                                     color="inherit"
                                 >
-                                    <Badge badgeContent={2} color="error">
+                                    <Badge badgeContent={0} color="error">
                                         <NotificationsIcon />
                                     </Badge>
                                 </IconButton>
@@ -259,6 +273,7 @@ export default function PrimarySearchAppBar() {
             >
                 <Notifications />
             </Drawer>
+            <Toaster />
         </Box>
     );
 }
