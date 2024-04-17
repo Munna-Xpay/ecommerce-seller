@@ -41,8 +41,15 @@ export default function PrimarySearchAppBar({ socket }) {
     useEffect(() => {
         socket?.on("getNotify", (msg) => {
             setNotifyMsg(msg)
-            // toast.success(msg)
-            console.log(msg)
+            // console.log(msg)
+        })
+        socket?.on("getNotifyCheckout", (msg) => {
+            //console.log(msg);
+            setNotifyMsg(msg)
+        })
+        socket?.on("getCancelOrder", (msg) => {
+            //console.log(msg);
+            setNotifyMsg(msg)
         })
     }, [socket])
 
