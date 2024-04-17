@@ -21,6 +21,8 @@ import { sellerState } from '../recoil/atoms/sellerState';
 import { BASE_URL } from '../services/baseUrl';
 import Notifications from './Notifications';
 import { notificationState } from '../recoil/atoms/notificationState';
+import { io } from 'socket.io-client';
+import toast, { Toaster } from 'react-hot-toast';
 
 
 
@@ -259,6 +261,7 @@ export default function PrimarySearchAppBar() {
             >
                 <Notifications />
             </Drawer>
+            <Toaster/>
         </Box>
     );
 }
