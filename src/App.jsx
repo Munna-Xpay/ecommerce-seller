@@ -34,9 +34,10 @@ function App() {
   }, [])
 
   useEffect(() => {
-    const userId = localStorage.getItem('sellerId')
-    socket && socket?.emit("sendClient", userId);
-  }, [socket])
+    if (seller?._id) {
+      socket && socket?.emit("sendClient", seller?._id);
+    }
+  }, [socket, seller])
 
   return (
     <>
