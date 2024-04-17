@@ -25,8 +25,7 @@ import { io } from 'socket.io-client';
 import toast, { Toaster } from 'react-hot-toast';
 
 
-
-export default function PrimarySearchAppBar() {
+export default function PrimarySearchAppBar({ socket }) {
 
     const navigate = useNavigate()
     const [seller, setSeller] = useRecoilState(sellerState)
@@ -38,6 +37,27 @@ export default function PrimarySearchAppBar() {
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
     const [open, setOpen] = useState(false);
+    const [notifyMsg, setNotifyMsg] = useState("")
+
+    useEffect(() => {
+        socket?.on("getNotify", (msg) => {
+            setNotifyMsg(msg)
+            // console.log(msg)
+        })
+        socket?.on("getNotifyCheckout", (msg) => {
+            //console.log(msg);
+            setNotifyMsg(msg)
+        })
+        socket?.on("getCancelOrder", (msg) => {
+            //console.log(msg);
+            setNotifyMsg(msg)
+        })
+    }, [socket])
+
+    useEffect(() => {
+        notifyMsg && toast.success(notifyMsg, { duration: 5000 })
+    }, [notifyMsg])
+
 
     const toggleDrawer = (isOpen) => () => {
         setOpen(isOpen);
@@ -208,7 +228,7 @@ export default function PrimarySearchAppBar() {
                                     aria-label="show 17 new notifications"
                                     color="inherit"
                                 >
-                                    <Badge badgeContent={2} color="error">
+                                    <Badge badgeContent={0} color="error">
                                         <NotificationsIcon />
                                     </Badge>
                                 </IconButton>

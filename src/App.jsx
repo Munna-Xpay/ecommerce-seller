@@ -17,13 +17,31 @@ import Sidebar from './components/Sidebar';
 import { useRecoilState } from 'recoil';
 import { sellerState } from './recoil/atoms/sellerState';
 import Reviews from './pages/Reviews';
+import { useEffect, useState } from 'react';
+import { io } from "socket.io-client";
+import { BASE_URL } from './services/baseUrl';
+
 
 function App() {
   const [seller, setSeller] = useRecoilState(sellerState)
 
+  const [socket, setSocket] = useState(null)
+
+  useEffect(() => {
+    const ws = io(BASE_URL)
+    console.log(ws)
+    setSocket(ws)
+  }, [])
+
+  useEffect(() => {
+    if (seller?._id) {
+      socket && socket?.emit("sendClient", seller?._id);
+    }
+  }, [socket, seller])
+
   return (
     <>
-      <Header />
+      <Header socket={socket} />
       <Stack direction={'row'}>
         {seller?._id &&
           <Box sx={{ display: { xs: 'none', md: 'block' } }}>
@@ -38,7 +56,7 @@ function App() {
             <Route path='/add-product' element={<AddProduct />} />
             <Route path='/profile' element={<SellerProfile />} />
             <Route path='/edit-product/:id' element={<EditProducts />} />
-            <Route path='/orders' element={<Orders />} />
+            <Route path='/orders' element={<Orders socket={socket} />} />
             <Route path='/product-management' element={<ProductManagement />} />
             <Route path='/reviews' element={<Reviews />} />
             <Route path='/transactions' element={<Transactions />} />

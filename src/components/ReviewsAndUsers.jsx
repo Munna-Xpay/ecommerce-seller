@@ -57,7 +57,7 @@ const ReviewsAndUsers = () => {
             <Grid item xs={12} md={4} >
                 <Paper>
                     <Stack p={2} spacing={1} height={'170px'} justifyContent={'center'} alignItems={'center'}>
-                        {reviewStat?.rating_stat?.length > 1
+                        {reviewStat?.rating_stat?.length > 0 && reviewStat?.rating_stat[0].star
                             ?
                             reviewStat?.rating_stat?.map(item => (
                                 item.star && <Stack width={'100%'} spacing={1} direction={'row'} alignItems={'center'}>
