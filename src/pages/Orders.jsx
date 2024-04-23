@@ -17,7 +17,7 @@ const Orders = ({ socket }) => {
 
     const [seller, setSeller] = useRecoilState(sellerState)
     const [orders, setOrders] = useRecoilState(orderState)
-    console.log(orders)
+   // console.log(orders)
     const [sortData, setSortData] = useState({
         categoryFilter: "All",
         sort_option: "latest"

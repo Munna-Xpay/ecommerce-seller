@@ -16,12 +16,14 @@ import Sidebar from '../components/Sidebar'
 import { Avatar, Button, Drawer, Stack } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { getResponseNotifications, sellerById } from '../services/allApi';
+import { getOrdersBySeller, getResponseNotifications, sellerById } from '../services/allApi';
 import { sellerState } from '../recoil/atoms/sellerState';
 import { BASE_URL } from '../services/baseUrl';
 import Notifications from './Notifications';
 import { notificationState } from '../recoil/atoms/notificationState';
+import { io } from 'socket.io-client';
 import toast, { Toaster } from 'react-hot-toast';
+import { orderState } from '../recoil/atoms/orderState';
 
 
 export default function PrimarySearchAppBar({ socket }) {
@@ -37,7 +39,25 @@ export default function PrimarySearchAppBar({ socket }) {
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
     const [open, setOpen] = useState(false);
     const [notifyMsg, setNotifyMsg] = useState("")
-
+    const [orders, setOrders] = useRecoilState(orderState)
+    console.log(orders)
+    const [sortData, setSortData] = useState({
+        categoryFilter: "All",
+        sort_option: "latest"
+    })
+    const getOrders = () => {
+        const token = localStorage.getItem('token')
+        const reqHeader = {
+            "Content-Type": "application/json",
+            "user_token": `Bearer ${token}`
+        }
+        getOrdersBySeller(seller?._id, reqHeader, sortData).then(res => {
+            console.log(res)
+            setOrders(res.data)
+        }).catch(err => {
+            toast.error("Failed to fetch orders")
+        })
+    }
     useEffect(() => {
         socket?.on("getNotify", (msg) => {
             setNotifyMsg(msg)
@@ -55,6 +75,7 @@ export default function PrimarySearchAppBar({ socket }) {
 
     useEffect(() => {
         notifyMsg && toast.success(notifyMsg, { duration: 5000 })
+        getOrders()
     }, [notifyMsg])
 
 
@@ -280,7 +301,7 @@ export default function PrimarySearchAppBar({ socket }) {
             >
                 <Notifications />
             </Drawer>
-            <Toaster />
+            <Toaster/>
         </Box>
     );
 }
