@@ -177,27 +177,33 @@ const Orders = ({ socket }) => {
                                     <TableCell sx={{ fontWeight: 'bold' }}> {order.products.product.category}</TableCell>
                                     <TableCell sx={{ fontWeight: 'bold' }}>{order.totalPrice}</TableCell>
                                     <TableCell sx={{ fontWeight: 'bold' }}>{order.shippingMethod}</TableCell>
-                                    <TableCell sx={{ fontWeight: 'bold' }}><Typography sx={{
-                                        backgroundColor: (() => {
-                                            switch (order.orderStatus) {
-                                                case 'Ordered':
-                                                    return '#f0ad4e';
-                                                case 'Confirmed':
-                                                    return '#00ba9d';
-                                                case 'Canceled':
-                                                    return 'red';
-                                                case 'Completed':
-                                                    return '#035ecf';
-                                                case 'Shipped':
-                                                    return '#f55505';
-                                                default:
-                                                    return 'black';
-                                            }
-                                        })(),
-                                        borderRadius: '20px',
-                                        color: 'white',
-                                        width: '100px'
-                                    }} p={1} textAlign={'center'}>{order.orderStatus}</Typography></TableCell>
+                                    <TableCell sx={{ fontWeight: 'bold' }}>
+                                        <Stack spacing={1}>
+                                            <Typography sx={{
+                                                backgroundColor: (() => {
+                                                    switch (order.orderStatus) {
+                                                        case 'Ordered':
+                                                            return '#f0ad4e';
+                                                        case 'Confirmed':
+                                                            return '#00ba9d';
+                                                        case 'Canceled':
+                                                            return 'red';
+                                                        case 'Completed':
+                                                            return '#035ecf';
+                                                        case 'Shipped':
+                                                            return '#f55505';
+                                                        default:
+                                                            return 'black';
+                                                    }
+                                                })(),
+                                                borderRadius: '20px',
+                                                color: 'white',
+                                                width: '100px'
+                                            }} p={1} textAlign={'center'}>{order.orderStatus}
+                                            </Typography>
+                                            {order.canceledReason && <Typography variant='body2' >(Reason : {order.canceledReason})</Typography>}
+                                        </Stack>
+                                    </TableCell>
                                     <TableCell sx={{ fontWeight: 'bold' }}>
                                         <Stack>
                                             <Typography> {new Date(order.createdAt).toLocaleDateString('en-US')}</Typography>
