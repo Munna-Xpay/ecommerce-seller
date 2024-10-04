@@ -1,11 +1,47 @@
 import { FormControl, MenuItem, Select, Table, TableBody, TableCell, TableContainer, TableHead, Paper, TableRow, Stack, Typography } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import PageHead from '../components/PageHead';
+import { sellerState } from '../recoil/atoms/sellerState';
+import { useRecoilState } from 'recoil';
+import { getTransactions } from '../services/allApi';
 
 
 function Transactions() {
   const [sort, setSort] = useState('recent')
+  const [transactions, setTransactions] = useState([])
+  const [seller, setSeller] = useRecoilState(sellerState)
+
+
+  const fetchAllTransaction = async () => {
+    const token = localStorage.getItem('token')
+    const reqHeader = {
+      "Content-Type": "application/json",
+      "user_token": `Bearer ${token}`
+    }
+    const res = await getTransactions(sort, seller?._id, reqHeader);
+    console.log(res)
+    setTransactions(res.data)
+  }
+
+  useEffect(() => {
+    seller._id && fetchAllTransaction()
+  }, [seller, sort])
+
+  const showAllTransactions = transactions.map((item) => {
+    return (
+      <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+        <TableCell sx={{ fontWeight: 'bold' }} component="th" scope="row"><Stack direction={'row'} spacing={1}> <><AccessTimeIcon /></><Stack><Typography fontSize={12}>{new Date(item?.createdAt).toLocaleDateString()}</Typography><Typography fontSize={10} color={'gray'}>at {new Date(item?.createdAt).toLocaleTimeString()}</Typography></Stack></Stack> </TableCell>
+        <TableCell sx={{ fontWeight: 'bold' }}>{item.method}</TableCell>
+        <TableCell sx={{ fontWeight: 'bold' }}>{item.type}</TableCell>
+        <TableCell sx={{ fontWeight: 'bold' }}><Typography sx={{ backgroundColor: '#035ecf', borderRadius: '20px', color: 'white', width: '100px' }} p={1} textAlign={'center'}>{item.status}</Typography></TableCell>
+        <TableCell sx={{ fontWeight: 'bold' }}>{item.country}</TableCell>
+        <TableCell sx={{ fontWeight: 'bold' }}>{item.currency}</TableCell>
+        <TableCell sx={{ fontWeight: 'bold' }}>₹ {item?.products?.product?.discounted_price}</TableCell>
+      </TableRow>
+    )
+  })
+
   return (
     <Stack minHeight={'100vh'}>
       <PageHead heading='Transactions' />
@@ -14,7 +50,7 @@ function Transactions() {
           <Typography>View transactions : 6/12</Typography>
           <Select
             value={sort}
-            sx={{ bgcolor:'white'}}
+            sx={{ bgcolor: 'white' }}
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             InputProps={{ style: { borderRadius: '7px' } }}
@@ -23,7 +59,7 @@ function Transactions() {
             <MenuItem value={'recent'}>Recent</MenuItem>
             <MenuItem value={'oldest'}>Oldest</MenuItem>
             <MenuItem value={'amount_low_to_high'}>Amount : Low to High</MenuItem>
-            <MenuItem value={'amount_high_to_low'}>Amount : Low to High</MenuItem>
+            <MenuItem value={'amount_high_to_low'}>Amount : High to Low</MenuItem>
           </Select>
         </FormControl>
       </Stack>
@@ -32,81 +68,20 @@ function Transactions() {
           <TableHead>
             <TableRow>
               <TableCell sx={{ fontSize: '14px', color: '#035ECF' }}>DATE & TIME</TableCell>
-              <TableCell sx={{ fontSize: '14px', color: '#035ECF' }}>SELLER</TableCell>
               <TableCell sx={{ fontSize: '14px', color: '#035ECF' }}>METHOD</TableCell>
               <TableCell sx={{ fontSize: '14px', color: '#035ECF' }}>TYPE</TableCell>
               <TableCell sx={{ fontSize: '14px', color: '#035ECF' }}>STATUS</TableCell>
               <TableCell sx={{ fontSize: '14px', color: '#035ECF' }}>COUNTRY</TableCell>
               <TableCell sx={{ fontSize: '14px', color: '#035ECF' }}>CURR</TableCell>
-              <TableCell sx={{ fontSize: '14px', color: '#035ECF' }}>FEE</TableCell>
-              <TableCell sx={{ fontSize: '14px', color: '#035ECF' }}>TAX</TableCell>
-              <TableCell sx={{ fontSize: '14px', color: '#035ECF' }}>TOTAL</TableCell>
-
-
-
+              <TableCell sx={{ fontSize: '14px', color: '#035ECF' }}>AMOUNT</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            <TableRow
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <TableCell sx={{ fontWeight: 'bold' }} component="th" scope="row"><Stack direction={'row'} spacing={1}> <><AccessTimeIcon/></><Stack><Typography fontSize={12}>02/03/2024</Typography><Typography fontSize={10} color={'gray'}>at 10:30am</Typography></Stack></Stack> </TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}><Stack direction={'row'} spacing={1}><><img width={60} height={45} src="data:image/webp;base64,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" alt="" /></><Typography mt={1}>Oaklet Store</Typography></Stack></TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>Maestro</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>Payment</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}><Typography sx={{backgroundColor:'#035ecf',  borderRadius: '20px',color: 'white',width: '100px'}} p={1} textAlign={'center'}>Approved</Typography></TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>India</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>All</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>7650.48</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>0.9</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>$$7581.69</TableCell>
-            </TableRow>
-            <TableRow
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <TableCell sx={{ fontWeight: 'bold' }} component="th" scope="row"><Stack direction={'row'} spacing={1}> <><AccessTimeIcon/></><Stack><Typography fontSize={12}>02/03/2024</Typography><Typography fontSize={10} color={'gray'}>at 10:30am</Typography></Stack></Stack> </TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}><Stack direction={'row'} spacing={1}><><img width={60} height={45} src="data:image/webp;base64,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" alt="" /></><Typography mt={1}>Oaklet Store</Typography></Stack></TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>Maestro</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>Payment</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}><Typography sx={{backgroundColor:'#035ecf',  borderRadius: '20px',color: 'white',width: '100px'}} p={1} textAlign={'center'}>Approved</Typography></TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>India</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>All</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>7650.48</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>0.9</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>$$7581.69</TableCell>
-            </TableRow>
-            <TableRow
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <TableCell sx={{ fontWeight: 'bold' }} component="th" scope="row"><Stack direction={'row'} spacing={1}> <><AccessTimeIcon/></><Stack><Typography fontSize={12}>02/03/2024</Typography><Typography fontSize={10} color={'gray'}>at 10:30am</Typography></Stack></Stack> </TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}><Stack direction={'row'} spacing={1}><><img width={60} height={45} src="data:image/webp;base64,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" alt="" /></><Typography mt={1}>Oaklet Store</Typography></Stack></TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>Maestro</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>Payment</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}><Typography sx={{backgroundColor:'#035ecf',  borderRadius: '20px',color: 'white',width: '100px'}} p={1} textAlign={'center'}>Approved</Typography></TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>India</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>All</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>7650.48</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>0.9</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>$$7581.69</TableCell>
-            </TableRow>
-            <TableRow
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <TableCell sx={{ fontWeight: 'bold' }} component="th" scope="row"><Stack direction={'row'} spacing={1}> <><AccessTimeIcon/></><Stack><Typography fontSize={12}>02/03/2024</Typography><Typography fontSize={10} color={'gray'}>at 10:30am</Typography></Stack></Stack> </TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}><Stack direction={'row'} spacing={1}><><img width={60} height={45} src="data:image/webp;base64,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" alt="" /></><Typography mt={1}>Oaklet Store</Typography></Stack></TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>Maestro</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>Payment</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}><Typography sx={{backgroundColor:'#035ecf',  borderRadius: '20px',color: 'white',width: '100px'}} p={1} textAlign={'center'}>Approved</Typography></TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>India</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>All</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>7650.48</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>0.9</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>$$7581.69</TableCell>
-            </TableRow>
+            {showAllTransactions}
           </TableBody>
         </Table>
       </TableContainer>
-      </Stack>
+    </Stack>
   )
 }
 
